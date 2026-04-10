@@ -57,3 +57,15 @@ class ExpressionToLispLikeSyntaxTest extends ExpressionToLispLikeSyntaxTestBase<
         super(new TestSupport<>(HandlerTestFixtures.v1Handler()));
     }
 }
+
+class ExpressionToLispLikeSyntaxV2Test extends ExpressionToLispLikeSyntaxTestBase<ExpressionV2> {
+    ExpressionToLispLikeSyntaxV2Test() {
+        super(new TestSupport<>(HandlerTestFixtures.v2Handler()));
+    }
+}
+
+class ExpressionToLispLikeSyntaxV2Support2Test extends ExpressionToLispLikeSyntaxTestBase<ExpressionV2> {
+    ExpressionToLispLikeSyntaxV2Support2Test() {
+        super(new TestSupport2<>(HandlerTestFixtures.v2Handler()));
+    }
+}

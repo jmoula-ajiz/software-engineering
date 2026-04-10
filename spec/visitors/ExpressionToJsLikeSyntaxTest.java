@@ -62,3 +62,15 @@ class ExpressionToJsLikeSyntaxTest extends ExpressionToJsLikeSyntaxTestBase<Expr
         super(new TestSupport<>(HandlerTestFixtures.v1Handler()));
     }
 }
+
+class ExpressionToJsLikeSyntaxV2Test extends ExpressionToJsLikeSyntaxTestBase<ExpressionV2> {
+    ExpressionToJsLikeSyntaxV2Test() {
+        super(new TestSupport<>(HandlerTestFixtures.v2Handler()));
+    }
+}
+
+class ExpressionToJsLikeSyntaxV2Support2Test extends ExpressionToJsLikeSyntaxTestBase<ExpressionV2> {
+    ExpressionToJsLikeSyntaxV2Support2Test() {
+        super(new TestSupport2<>(HandlerTestFixtures.v2Handler()));
+    }
+}
