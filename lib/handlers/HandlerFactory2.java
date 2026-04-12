@@ -103,7 +103,7 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
     }
 
     public <T> Function<ExpressionV2, T> dictReader(IExpressionDict2<T> values) {
-        var visitor = new W.D<T, T, ExpressionV2>(values);
+        var visitor = new W.G<T, ExpressionV2>(values);
         return expression -> expression.accept(visitor);
     }
 
@@ -120,7 +120,7 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
             public Dict2<T> intial(T value) { return new Dict2<>(value); }
             public Function<ExpressionV2, T> getter(Dict2<T> state) { return dictReader(state); }
             public Consumer<ExpressionV2> setter(Dict2<T> state, T value) {
-                return expression -> expression.accept(new W.D<Void, T, ExpressionV2>(state, value));
+                return expression -> expression.accept(new W.S<T, ExpressionV2>(state, value));
             }
         };
     }
@@ -175,36 +175,17 @@ final class W {
         public ExpressionV2 visitLambda(LambdaExpression<ExpressionV2> e) { return r; }
     }
 
-    @SuppressWarnings("unchecked")
-    static final class D<R, T, E> implements ExpressionVisitorV2<R, E> {
-        private final IExpressionDict2<T> g;
-        private final Dict2<T> s;
+    static final class G<T, E> extends IsomorphicGetter<T, E> implements ExpressionVisitorV2<T, E> {
+        private final IExpressionDict2<T> d;
+        G(IExpressionDict2<T> g) { super(g); d = g; }
+        public T visitLambda(LambdaExpression<E> e) { return d.lambdaExpression(); }
+    }
+
+    static final class S<T, E> extends IsomorphicSetter<T, E> implements ExpressionVisitorV2<Void, E> {
+        private final Dict2<T> d;
         private final T v;
-        D(IExpressionDict2<T> g) { this.g = g; this.s = null; this.v = null; }
-        D(Dict2<T> s, T v) { this.g = null; this.s = s; this.v = v; }
-        private boolean z() { return s != null; }
-        public R visit(Literal<E> e) { return z() ? a(() -> s.literal = v) : (R) g.literal(); }
-        public R visit(VariableReference<E> e) { return z() ? a(() -> s.variableReference = v) : (R) g.variableReference(); }
-        public R visit(Addition<E> e) { return z() ? a(() -> s.addition = v) : (R) g.addition(); }
-        public R visit(Subtraction<E> e) { return z() ? a(() -> s.subtraction = v) : (R) g.subtraction(); }
-        public R visit(Multiplication<E> e) { return z() ? a(() -> s.multiplication = v) : (R) g.multiplication(); }
-        public R visit(Division<E> e) { return z() ? a(() -> s.division = v) : (R) g.division(); }
-        public R visit(Negation<E> e) { return z() ? a(() -> s.negation = v) : (R) g.negation(); }
-        public R visit(Modulo<E> e) { return z() ? a(() -> s.modulo = v) : (R) g.modulo(); }
-        public R visit(Exponentiation<E> e) { return z() ? a(() -> s.exponentiation = v) : (R) g.exponentiation(); }
-        public R visit(Equality<E> e) { return z() ? a(() -> s.equality = v) : (R) g.equality(); }
-        public R visit(Inequality<E> e) { return z() ? a(() -> s.inequality = v) : (R) g.inequality(); }
-        public R visit(LessThan<E> e) { return z() ? a(() -> s.lessThan = v) : (R) g.lessThan(); }
-        public R visit(GreaterThan<E> e) { return z() ? a(() -> s.greaterThan = v) : (R) g.greaterThan(); }
-        public R visit(LessThanOrEqual<E> e) { return z() ? a(() -> s.lessThanOrEqual = v) : (R) g.lessThanOrEqual(); }
-        public R visit(GreaterThanOrEqual<E> e) { return z() ? a(() -> s.greaterThanOrEqual = v) : (R) g.greaterThanOrEqual(); }
-        public R visit(Conjunction<E> e) { return z() ? a(() -> s.conjunction = v) : (R) g.conjunction(); }
-        public R visit(Disjunction<E> e) { return z() ? a(() -> s.disjunction = v) : (R) g.disjunction(); }
-        public R visit(LogicalNot<E> e) { return z() ? a(() -> s.logicalNot = v) : (R) g.logicalNot(); }
-        public R visit(Conditional<E> e) { return z() ? a(() -> s.conditional = v) : (R) g.conditional(); }
-        public R visit(FunctionCall<E> e) { return z() ? a(() -> s.functionCall = v) : (R) g.functionCall(); }
-        public R visitLambda(LambdaExpression<E> e) { return z() ? a(() -> s.lambdaExpression = v) : (R) g.lambdaExpression(); }
-        private R a(Runnable x) { x.run(); return (R) null; }
+        S(Dict2<T> s, T x) { super(s, x); d = s; v = x; }
+        public Void visitLambda(LambdaExpression<E> e) { d.lambdaExpression = v; return null; }
     }
 
     static final class P implements ExpressionVisitorV2<ExpressionV2, ExpressionV2> {
