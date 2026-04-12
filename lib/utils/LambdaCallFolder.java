@@ -52,8 +52,7 @@ public class LambdaCallFolder<E, L> {
             return expression;
         }
 
-        E reduced = substitute(lambdaBody.apply(lambda), lambdaParameterName.apply(lambda), call.arguments.get(0));
-        return foldCall(reduced);
+        return substitute(lambdaBody.apply(lambda), lambdaParameterName.apply(lambda), call.arguments.get(0));
     }
 
     private E substitute(E expression, String parameterName, E replacement) {

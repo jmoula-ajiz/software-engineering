@@ -124,8 +124,17 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
 
     @Override
     protected ExpressionV2 foldConstantOnce(ExpressionV2 expression) {
-        var folded = lambdaFolder.foldCall(expression);
+        var folded = foldCallChain(expression);
         return folded.accept(new ConstantFolderOnceV2(f, folded, isLiteral()));
+    }
+
+    /** Repeated β-reduction until fixpoint; divergent terms (e.g. ω) recurse until {@link StackOverflowError}. */
+    private ExpressionV2 foldCallChain(ExpressionV2 e) {
+        ExpressionV2 n = lambdaFolder.foldCall(e);
+        if (n == e) {
+            return e;
+        }
+        return foldCallChain(n);
     }
 
     @Override
