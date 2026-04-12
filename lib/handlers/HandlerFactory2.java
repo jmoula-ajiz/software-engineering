@@ -8,6 +8,8 @@ import ds.Dict2;
 import lib.dict.BindingPowersDict;
 import lib.dict.ClassNamesDict;
 import lib.expression.*;
+import lib.expression.Factory2.ExpressionVisitorV2;
+import lib.expression.Factory2.LambdaExpression;
 import lib.utils.Either;
 import lib.utils.EitherVisitor;
 import lib.utils.Left;
@@ -68,18 +70,17 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
     }
 
     public Function<ExpressionV2, List<ExpressionV2>> expressionChildren() {
-        var ch = new W.C<ExpressionV2>();
-        return expression -> expression.accept(ch);
+        return expression -> expression.accept(new W.C<ExpressionV2>());
     }
 
     protected ExpressionV2 foldConstantOnce(ExpressionV2 expression) {
-        var folded = foldCallChain(expression);
-        return folded.accept(new W.K(f, folded, isLiteral()));
-    }
-
-    private ExpressionV2 foldCallChain(ExpressionV2 e) {
-        ExpressionV2 n = m.foldCall(e);
-        return n == e ? e : foldCallChain(n);
+        ExpressionV2 e = expression;
+        for (;;) {
+            ExpressionV2 n = m.foldCall(e);
+            if (n == e) break;
+            e = n;
+        }
+        return e.accept(new W.K(f, e, isLiteral()));
     }
 
     public Function<ExpressionV2, ExpressionV2> expressionMapper(BiFunction<ExpressionV2, Supplier<ExpressionV2>, ExpressionV2> recurse) {
@@ -91,13 +92,11 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
     }
 
     public Function<ExpressionV2, String> lispLikeSyntaxPrinter() {
-        var v = new W.L(this);
-        return expression -> expression.accept(v);
+        return expression -> expression.accept(new W.L(this));
     }
 
     public <T> Function<ExpressionV2, T> dictReader(IExpressionDict2<T> values) {
-        var visitor = new W.G<T, ExpressionV2>(values);
-        return expression -> expression.accept(visitor);
+        return expression -> expression.accept(new W.G<T, ExpressionV2>(values));
     }
 
     public Function<ExpressionV2, String> expressionClassNameExtractor() { return dictReader(CN); }
