@@ -54,21 +54,19 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
     }
 
     private LambdaExpression<ExpressionV2> asLambda(ExpressionV2 e) {
-        return e.accept(new FallbackVisitorV2<LambdaExpression<ExpressionV2>, ExpressionV2>(_e -> null) {
-            @Override
-            public LambdaExpression<ExpressionV2> visitLambda(LambdaExpression<ExpressionV2> x) {
-                return x;
-            }
-        });
+        var inner = e.unwrap();
+        if (inner instanceof LambdaExpression<ExpressionV2> lam) {
+            return lam;
+        }
+        return null;
     }
 
     private FunctionCall<ExpressionV2> asFunctionCall(ExpressionV2 e) {
-        return e.accept(new FallbackVisitorV2<FunctionCall<ExpressionV2>, ExpressionV2>(_e -> null) {
-            @Override
-            public FunctionCall<ExpressionV2> visit(FunctionCall<ExpressionV2> x) {
-                return x;
-            }
-        });
+        var inner = e.unwrap();
+        if (inner instanceof FunctionCall<ExpressionV2> call) {
+            return call;
+        }
+        return null;
     }
 
     @Override
@@ -133,8 +131,7 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
     @Override
     public Function<ExpressionV2, ExpressionV2> expressionMapper(
             BiFunction<ExpressionV2, Supplier<ExpressionV2>, ExpressionV2> recurse) {
-        var mapper = new ExpressionMapperV2(this, recurse, (e, visitor) -> e.accept(visitor));
-        return expression -> expression.accept(mapper);
+        return new ExpressionMapperV2(this, recurse, (e, visitor) -> e.accept(visitor));
     }
 
     @Override

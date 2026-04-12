@@ -61,8 +61,7 @@ public class HandlerFactory extends HandlerFactoryBase<ExpressionV1> implements 
     @Override
     public Function<ExpressionV1, ExpressionV1> expressionMapper(
             BiFunction<ExpressionV1, Supplier<ExpressionV1>, ExpressionV1> recurse) {
-        var mapper = new ExpressionMapper<ExpressionV1>(this, recurse, (e, visitor) -> e.accept(visitor));
-        return expression -> expression.accept(mapper);
+        return new ExpressionMapper<ExpressionV1>(this, recurse, (e, visitor) -> e.accept(visitor));
     }
 
     @Override
