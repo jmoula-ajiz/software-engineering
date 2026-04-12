@@ -63,7 +63,7 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
     }
 
     private FunctionCall<ExpressionV2> asFunctionCall(ExpressionV2 e) {
-        return e.accept(new FallbackVisitor<FunctionCall<ExpressionV2>, ExpressionV2>(_e -> null) {
+        return e.accept(new FallbackVisitorV2<FunctionCall<ExpressionV2>, ExpressionV2>(_e -> null) {
             @Override
             public FunctionCall<ExpressionV2> visit(FunctionCall<ExpressionV2> x) {
                 return x;
