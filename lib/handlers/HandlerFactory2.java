@@ -131,22 +131,18 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
         return new LocalReduceVisitor<ExpressionV2, Dict2<T>, T>(state(), initial, reducer, this.expressionChildren());
     }
 
-    public Function<ExpressionV2, port.IExpressionDict<Integer>> histogram() {
-        var visitor = localReduceVisitor(0, (n, _e) -> n + 1);
-        return expression -> visitor.apply(expression);
-    }
+    private Function<ExpressionV2, Dict2<Integer>> h() { return localReduceVisitor(0, (n, _e) -> n + 1); }
 
-    public Function<ExpressionV2, IExpressionDict2<Integer>> histogram2() {
-        var visitor = localReduceVisitor(0, (n, _e) -> n + 1);
-        return expression -> visitor.apply(expression);
-    }
+    @SuppressWarnings("unchecked")
+    public Function<ExpressionV2, port.IExpressionDict<Integer>> histogram() { return (Function) h(); }
+
+    @SuppressWarnings("unchecked")
+    public Function<ExpressionV2, IExpressionDict2<Integer>> histogram2() { return (Function) h(); }
 
     public IExpressionDict2<String> collectClassNamesDict() { return new W.N(); }
 }
 
 final class W {
-    private W() {}
-
     abstract static class A<R, E> extends FallbackVisitor<R, E> implements ExpressionVisitorV2<R, E> {
         private final Function<Expression<E>, R> t;
         A(Function<Expression<E>, R> f) { super(f); t = f; }
