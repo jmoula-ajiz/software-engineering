@@ -16,6 +16,7 @@ import lib.utils.Left;
 import lib.utils.LambdaCallFolder;
 import lib.utils.Right;
 import lib.visitors.*;
+import port.IExpressionDict;
 import port.IExpressionDict2;
 import port.IExpressionFactory2;
 import port.IHandlerFactory2;
@@ -30,8 +31,8 @@ public class HandlerFactory2 extends HandlerFactoryBase<ExpressionV2> implements
                 this::variableName,
                 f::variableReference,
                 this::asLambda,
-                LambdaExpression::parameter,
-                LambdaExpression::body,
+                l -> l.parameter,
+                l -> l.body,
                 f::lambdaExpression,
                 expressionChildren(),
                 (ex, op) -> ex.accept(new MapChildV2(f, op)),
